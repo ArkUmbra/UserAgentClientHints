@@ -1,0 +1,100 @@
+<html>
+
+    <body>
+        <h2>[CURRENT] User Agent String</h2>
+        <div id="userAgentOld"> </div>
+        <br />
+
+        <h2>[NEW] User Agent Hints</h2>
+
+        <div id="error" style="display:none">
+            <strong>
+                ERROR: Your browser does not support the new User-Agent Client Hints feature. In some browsers (e.g. Chromium-based ones) you can enable these settings through the 'Experimental Web Platform features' option <i>chrome://flags/#enable-experimental-web-platform-features</i>
+            </strong>
+        </div>
+
+        <div id="useragentclienthints">
+            <div id="mobile">
+                <h3>Is Mobile?</h3>
+            </div>
+
+            <div id="brands">
+                <h3>Browser Brand Data</h3>
+            </div>
+            
+            <div id="highentropyvalues">
+                <h3>High Entropy Values</h3>
+                <table>
+                    <th>Key</th>
+                    <th>Value</th>
+
+                    <tr>
+                        <td>Architecture</td>
+                        <td id="architecture"></td>
+                    </tr>
+                    <tr>
+                        <td>Model</td>
+                        <td id="model"></td>
+                    </tr>
+                    <tr>
+                        <td>Platform</td>
+                        <td id="platform"></td>
+                    </tr>
+                    <tr>
+                        <td>Platform Version</td>
+                        <td id="platformVersion"></td>
+                    </tr>
+                    <tr>
+                        <td>UA Full Version</td>
+                        <td id="uaFullVersion"></td>
+                    </tr>
+
+                </table>
+
+            </div>
+        </div>
+    </body>
+
+
+
+    <script> 
+        var userAgentOld = navigator.userAgent
+        document.getElementById('userAgentOld').innerHTML = userAgentOld
+        console.log(userAgentOld)
+
+        const ua = navigator.userAgentData;
+        if (ua == null) {
+            console.log("New user agent client hints not supported");
+            document.getElementById("error").style.display = "block";
+            document.getElementById("useragentclienthints").style.display = "none";
+
+        } else {
+            document.getElementById('mobile').innerHTML += ua.mobile
+
+
+            var tableData = "<table> <th>Brand</th> <th>Version</>"
+            for (i = 0; i < ua.brands.length; i++) {
+                tableData += "<tr> <td>" + ua.brands[i].brand + "</td> <td> " + ua.brands[i].version + "</td> </tr>"
+            }
+            tableData += "</table>"
+            document.getElementById('brands').innerHTML += tableData
+
+
+            ua.getHighEntropyValues([
+                "platform",
+                "platformVersion",
+                "architecture",
+                "model",
+                "uaFullVersion"
+            ]).then(res => {
+                document.getElementById('architecture').innerHTML = res["architecture"]
+                document.getElementById('model').innerHTML = res["model"]
+                document.getElementById('platform').innerHTML = res["platform"]
+                document.getElementById('platformVersion').innerHTML = res["platformVersion"]
+                document.getElementById('uaFullVersion').innerHTML = res["uaFullVersion"]
+                console.log(res)
+            }); 
+        }
+    </script>
+
+</html>
